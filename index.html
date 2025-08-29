@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreakHub - Inicio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>FreakHub</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <!-- Más enlaces se añadirán después -->
+            </ul>
+            <div id="auth-buttons">
+                <button id="login-btn" href="./login.html" >Iniciar Sesión</button>
+                <button id="register-btn" href="./register.html">Registrarse</button>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="hero">
+            <h2>Explora nuestras publicaciones</h2>
+            <p>Descubre películas, series, animes y más.</p>
+        </section>
+        <section class="content-grid" id="movie-list"></section>
+        <button id="create-post-btn" style="display: none;">Crear Publicación</button>
+    </main>
+    <footer>
+        <p>&copy; 2025 FreakHub</p>
+    </footer>
+    <script src="js/scripts.js" type="module"></script>
+    <script src="js/api.js" type="module"></script>
+    <script src="js/utils.js" type="module"></script>
+</body>
+</html>

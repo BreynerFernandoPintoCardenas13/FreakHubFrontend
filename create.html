@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreakHub - Crear Publicación</title>
+    <script type="module" src="js/scripts.js"></script>
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/utils.js"></script>
+</head>
+<body>
+    <h2>Crear Publicación</h2>
+    <form id="create-form" enctype="multipart/form-data">
+        <label for="title">Título:</label>
+        <input type="text" id="title" name="title" required><br>
+        
+        <label for="description">Descripción:</label>
+        <input type="text" id="description" name="description" required><br>
+        
+        <label for="category">Categoría:</label>
+        <select id="category" name="category" required></select><br>
+        
+        <label for="year">Año:</label>
+        <input type="number" id="year" name="year" min="1900" required><br>
+        
+        <label for="image">Imagen (JPG o PNG):</label>
+        <input type="file" id="image" name="image" accept=".jpg,.jpeg,.png" required><br>
+        
+        <button type="submit">Crear Publicación</button>
+    </form>
+    <p><a href="index.html">Volver al Inicio</a></p>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreakHub - Panel de Administrador</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <script type="module" src="js/scripts.js"></script>
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/utils.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>FreakHub</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><button id="create-category-btn">Crear Nueva Categoría</button></li>
+            </ul>
+            <div id="auth-buttons">
+                <span id="user-name">Usuario</span>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="hero">
+            <h2>Películas Pendientes de Aprobación</h2>
+            <p>Aprobar o revisar las publicaciones propuestas.</p>
+        </section>
+        <section class="content-grid" id="pending-movie-list"></section>
+        <!-- Sección para gestionar categorías -->
+        <section id="category-management" style="display: none; padding: 2rem;">
+            <h2>Gestión de Categorías</h2>
+            <form id="category-form">
+                <label for="category-name">Nombre de la Categoría:</label>
+                <input type="text" id="category-name" name="category-name" required><br>
+                <input type="hidden" id="category-id" name="category-id">
+                <button type="submit" id="category-submit-btn">Crear Categoría</button>
+                <button type="button" id="category-cancel-btn" style="display: none;">Cancelar</button>
+            </form>
+            <div id="category-list"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 FreakHub</p>
+        <div id="admin-panel-button" style="display: none;">
+            <a href="admin.html">Panel de Administrador</a>
+        </div>
+    </footer>
+</body>
+</html>

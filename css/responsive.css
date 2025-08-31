@@ -21,4 +21,16 @@
     .hero p {
         font-size: 1rem;
     }
+
+    form {
+        margin: 1rem;
+        padding: 0.5rem;
+    }
+
+    form input,
+    form select,
+    form button {
+        font-size: 0.9rem;
+        padding: 0.4rem;
+    }
 }

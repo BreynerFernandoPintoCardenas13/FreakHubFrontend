@@ -48,16 +48,23 @@ nav ul li a:hover {
     gap: 1rem;
 }
 
-#auth-buttons button {
+#auth-buttons span#user-name {
+    cursor: pointer;
+}
+
+#auth-buttons button,
+button {
     padding: 0.5rem 1rem;
     background-color: #e50914;
     border: none;
     color: #fff;
     cursor: pointer;
     border-radius: 4px;
+    font-size: 1rem;
 }
 
-#auth-buttons button:hover {
+#auth-buttons button:hover,
+button:hover {
     background-color: #f40612;
 }
 
@@ -85,12 +92,12 @@ nav ul li a:hover {
     padding: 2rem;
 }
 
-/* Tarjetas de publicaciones (se estilizarán dinámicamente con JS) */
 .movie-card {
     background-color: #222;
     padding: 1rem;
     border-radius: 4px;
     text-align: center;
+    transition: transform 0.2s;
 }
 
 .movie-card img {
@@ -109,31 +116,45 @@ nav ul li a:hover {
     font-size: 0.9rem;
 }
 
-/* Footer */
-footer {
-    text-align: center;
-    padding: 1rem;
-    background-color: #000;
-    border-top: 1px solid #333;
+.movie-card:hover {
+    transform: scale(1.05);
+    cursor: pointer;
 }
 
-/* Botón Crear Publicación */
-#create-post-btn {
-    display: block;
-    margin: 1rem auto;
-    padding: 0.5rem 1rem;
-    background-color: #e50914;
-    border: none;
-    color: #fff;
-    cursor: pointer;
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #1a1a1a;
     border-radius: 4px;
 }
 
-#create-post-btn:hover {
-    background-color: #f40612;
+form label {
+    font-size: 1rem;
 }
 
-/* Alertas (de utils.js) */
+form input,
+form select {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background-color: #222;
+    color: #fff;
+}
+
+form input[type="file"] {
+    border: none;
+    background-color: transparent;
+}
+
+form button {
+    margin-top: 1rem;
+}
+
 .alert {
     position: fixed;
     top: 1rem;
@@ -154,9 +175,10 @@ footer {
     color: #fff;
 }
 
-/* Hover en tarjetas */
-.movie-card:hover {
-    transform: scale(1.05);
-    transition: transform 0.2s;
-    cursor: pointer;
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #000;
+    border-top: 1px solid #333;
 }

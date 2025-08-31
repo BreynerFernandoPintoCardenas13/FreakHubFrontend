@@ -158,3 +158,24 @@ export const updateCategory = async (categoryId, categoryData, token) => {
         throw error;
     }
 };
+
+// Obtener detalles de una película
+export const getMovieDetails = async (movieId, token) => {
+    return await fetchData(`/movies/get/${movieId}`, token);
+};
+
+// Crear una reseña
+export const createReview = async (movieId, reviewData, token) => {
+    return await postData(`/movies/${movieId}/reviews`, reviewData, token);
+};
+
+// Agregar comentario a una reseña
+export const addComment = async (movieId, reviewId, commentData, token) => {
+    return await postData(`/reviews/${reviewId}/comments`, commentData, token); // Cambiada a /reviews/:id/comments
+};
+
+// Gestionar like/dislike en una reseña
+export const toggleReviewReaction = async (reviewId, action, token) => {
+    const response = await postData(`/reviews/${reviewId}/like`, {}, token); // Cambiada a /reviews/:id/like o /dislike
+    return response; // Retorna true/false según el backend
+};

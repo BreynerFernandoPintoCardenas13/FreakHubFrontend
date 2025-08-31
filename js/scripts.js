@@ -1,4 +1,4 @@
-import { getMovies, registerUser, loginUser, getCategories, createMovie, getPendingMovies, approveMovie, createCategory } from './api.js';
+import { toggleReviewReaction ,addComment, getMovies, registerUser, loginUser, getCategories, createMovie, getPendingMovies, approveMovie, createCategory, getMovieDetails, createReview } from './api.js';
 import { showAlert, formatRating } from './utils.js';
 
 // Elementos del DOM
@@ -337,4 +337,158 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (document.getElementById('category-list')) loadCategories();
+});
+
+// Cargar y renderizar detalles de la película
+const loadMovieDetails = async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieId = urlParams.get('id');
+    const token = localStorage.getItem('token');
+
+    if (!movieId) {
+        showAlert('ID de película no encontrado');
+        return;
+    }
+
+    try {
+        const movie = await getMovieDetails(movieId, token);
+        const movieDetails = document.getElementById('movie-details');
+        movieDetails.innerHTML = `
+            <img src="${movie.image || 'https://via.placeholder.com/300x450'}" alt="${movie.title}">
+            <h2>${movie.title}</h2>
+            <p><strong>Descripción:</strong> ${movie.description}</p>
+            <p><strong>Categoría:</strong> ${movie.category}</p>
+            <p><strong>Año:</strong> ${movie.year}</p>
+            <p><strong>Rating Promedio:</strong> ${formatRating(movie.rating)}</p>
+        `;
+    } catch (error) {
+        showAlert('Error al cargar detalles: ' + error.message);
+    }
+};
+
+// Cargar y renderizar reseñas
+const loadReviews = async (movieId) => {
+    const token = localStorage.getItem('token');
+    try {
+        const movie = await getMovieDetails(movieId, token);
+        const reviewsList = document.getElementById('reviews-list');
+        reviewsList.innerHTML = '';
+        movie.reviews.forEach(review => {
+            const div = document.createElement('div');
+            div.className = 'review-card';
+            div.innerHTML = `
+                <p><strong>${review.userName}</strong> - ${formatRating(review.rating)} - ${new Date(review.createdAt).toLocaleDateString()}</p>
+                <p>${review.text}</p>
+                <div class="comments-section" id="comments-${review._id}">
+                    <h4>Comentarios</h4>
+                    <form id="comment-form-${review._id}" style="display: none;">
+                        <textarea id="comment-text-${review._id}" required></textarea><br>
+                        <button type="submit">Comentar</button>
+                        <button type="button" id="cancel-comment-${review._id}">Cancelar</button>
+                    </form>
+                    <button id="add-comment-${review._id}">Añadir Comentario</button>
+                    <div id="comments-list-${review._id}"></div>
+                </div>
+                <button id="like-btn-${review._id}" data-action="like">👍 ${review.likes || 0}</button>
+                <button id="dislike-btn-${review._id}" data-action="dislike">👎 ${review.dislikes || 0}</button>
+            `;
+            reviewsList.appendChild(div);
+
+            // Cargar comentarios
+            if (review.comments) {
+                const commentsList = document.getElementById(`comments-list-${review._id}`);
+                review.comments.forEach(comment => {
+                    const commentDiv = document.createElement('div');
+                    commentDiv.innerHTML = `<p>${comment.userName}: ${comment.text} - ${new Date(comment.createdAt).toLocaleDateString()}</p>`;
+                    commentsList.appendChild(commentDiv);
+                });
+            }
+
+            // Evento para añadir comentario
+            document.getElementById(`add-comment-${review._id}`).addEventListener('click', () => {
+                document.getElementById(`comment-form-${review._id}`).style.display = 'block';
+            });
+            document.getElementById(`comment-form-${review._id}`).addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const commentText = document.getElementById(`comment-text-${review._id}`).value;
+                if (commentText) {
+                    await addComment(movieId, review._id, { text: commentText }, token);
+                    document.getElementById(`comment-text-${review._id}`).value = '';
+                    document.getElementById(`comment-form-${review._id}`).style.display = 'none';
+                    loadReviews(movieId);
+                }
+            });
+            document.getElementById(`cancel-comment-${review._id}`).addEventListener('click', () => {
+                document.getElementById(`comment-form-${review._id}`).style.display = 'none';
+                document.getElementById(`comment-text-${review._id}`).value = '';
+            });
+
+            // Evento para likes/dislikes
+            document.getElementById(`like-btn-${review._id}`).addEventListener('click', async () => {
+                await toggleReviewReaction(movieId, review._id, 'like', token);
+                loadReviews(movieId);
+            });
+            document.getElementById(`dislike-btn-${review._id}`).addEventListener('click', async () => {
+                await toggleReviewReaction(movieId, review._id, 'dislike', token);
+                loadReviews(movieId);
+            });
+        });
+    } catch (error) {
+        showAlert('Error al cargar reseñas: ' + error.message);
+    }
+};
+
+// Manejar creación de reseña
+// Manejar creación de reseña
+const handleReviewForm = async (e) => {
+    e.preventDefault();
+    const movieId = new URLSearchParams(window.location.search).get('id');
+    const token = localStorage.getItem('token');
+    const title = document.getElementById('review-title').value.trim();
+    const rating = document.getElementById('review-rating').value;
+    const text = document.getElementById('review-text').value.trim();
+
+    if (!title || !rating || !text) {
+        showAlert('Por favor, completa todos los campos');
+        return;
+    }
+
+    try {
+        // Extraer userId del token (asumiendo que está en el payload)
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const userId = payload.id; // Asegúrate de que el token incluya id
+
+        await createReview(movieId, { title, comment: text, rating: parseInt(rating), userId }, token);
+        document.getElementById('review-form').reset();
+        document.getElementById('create-review').style.display = 'none';
+        loadReviews(movieId);
+    } catch (error) {
+        showAlert(error.message);
+    }
+};
+
+// Manejar eventos
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+    if (document.getElementById('movie-list')) loadMovies();
+    if (document.getElementById('pending-movie-list')) loadPendingMovies();
+    if (document.getElementById('category-list')) loadCategories();
+
+    const movieDetails = document.getElementById('movie-details');
+    if (movieDetails) loadMovieDetails();
+
+    const reviewsSection = document.getElementById('reviews-section');
+    if (reviewsSection) {
+        const movieId = new URLSearchParams(window.location.search).get('id');
+        loadReviews(movieId);
+
+        document.getElementById('add-review-btn').addEventListener('click', () => {
+            document.getElementById('create-review').style.display = 'block';
+        });
+        document.getElementById('cancel-review-btn').addEventListener('click', () => {
+            document.getElementById('review-form').reset();
+            document.getElementById('create-review').style.display = 'none';
+        });
+        document.getElementById('review-form').addEventListener('submit', handleReviewForm);
+    }
 });

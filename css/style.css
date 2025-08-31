@@ -182,3 +182,42 @@ footer {
     background-color: #000;
     border-top: 1px solid #333;
 }
+
+
+
+.movie-details {
+    padding: 2rem;
+    background-color: #1a1a1a;
+    border-radius: 4px;
+    margin: 2rem;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.movie-details img {
+    max-width: 300px;
+    height: auto;
+}
+
+.reviews-section {
+    padding: 2rem;
+}
+
+.review-card {
+    background-color: #222;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.comments-section {
+    margin-top: 1rem;
+    padding-left: 1rem;
+}
+
+#comment-form-${review._id} textarea {
+    width: 100%;
+    margin-bottom: 0.5rem;
+}
+

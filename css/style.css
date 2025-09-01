@@ -24,7 +24,7 @@ header {
 
 .logo h1 {
     font-size: 1.5rem;
-    color: #e50914;
+    color: #025B97;
 }
 
 nav ul {
@@ -40,7 +40,7 @@ nav ul li a {
 }
 
 nav ul li a:hover {
-    color: #e50914;
+    color: #025B97;
 }
 
 #auth-buttons {
@@ -55,7 +55,7 @@ nav ul li a:hover {
 #auth-buttons button,
 button {
     padding: 0.5rem 1rem;
-    background-color: #e50914;
+    background-color: #025B97;
     border: none;
     color: #fff;
     cursor: pointer;
@@ -65,7 +65,7 @@ button {
 
 #auth-buttons button:hover,
 button:hover {
-    background-color: #f40612;
+    background-color: #025B97;
 }
 
 /* Main */
@@ -132,6 +132,15 @@ form {
     border-radius: 4px;
 }
 
+form h2 {
+    text-align: center;
+}
+
+p a {
+    color: #025B97;
+    text-decoration: none; 
+}
+
 form label {
     font-size: 1rem;
 }
@@ -166,7 +175,7 @@ form button {
 }
 
 .alert.error {
-    background-color: #e50914;
+    background-color: #025B97;
     color: #fff;
 }
 
@@ -216,8 +225,8 @@ footer {
     padding-left: 1rem;
 }
 
-#comment-form-${review._id} textarea {
+/* #comment-form-${review._id} textarea {
     width: 100%;
     margin-bottom: 0.5rem;
-}
+} */
 

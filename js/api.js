@@ -7,7 +7,7 @@ const fetchData = async (endpoint, token = null) => {
     const headers = { 'Content-Type': 'application/json' };
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
-        console.log('Enviando token:', token); // Depuración
+        console.log('Token enviado:', token); // Depuración
     }
 
     try {
@@ -24,7 +24,6 @@ const fetchData = async (endpoint, token = null) => {
         throw error;
     }
 };
-
 // Función para hacer peticiones POST
 const postData = async (endpoint, data, token = null) => {
     const headers = { 'Content-Type': 'application/json' };
@@ -166,16 +165,24 @@ export const getMovieDetails = async (movieId, token) => {
 
 // Crear una reseña
 export const createReview = async (movieId, reviewData, token) => {
-    return await postData(`/movies/${movieId}/reviews`, reviewData, token);
+    return await postData(`/movies/create/${movieId}/reviews`, reviewData, token);
 };
 
 // Agregar comentario a una reseña
-export const addComment = async (movieId, reviewId, commentData, token) => {
-    return await postData(`/reviews/${reviewId}/comments`, commentData, token); // Cambiada a /reviews/:id/comments
+export const addComment = async (reviewId, commentData, token) => {
+    return await postData(`/reviews/${reviewId}/comments`, commentData, token);
 };
 
 // Gestionar like/dislike en una reseña
-export const toggleReviewReaction = async (reviewId, action, token) => {
-    const response = await postData(`/reviews/${reviewId}/like`, {}, token); // Cambiada a /reviews/:id/like o /dislike
-    return response; // Retorna true/false según el backend
+export const toggleReviewReaction = async (reviewId, isLike, token) => {
+    return await postData(`/reviews/${reviewId}/like`, { isLike }, token);
+};
+
+// Obtener una reseña por ID
+export const getReviewById = async (reviewId, token) => {
+    return await fetchData(`/reviews/${reviewId}`, token);
+};
+
+export const getReviewsByMovie = async (movieId) => {
+    return await fetchData(`/movies/${movieId}/reviews`);
 };

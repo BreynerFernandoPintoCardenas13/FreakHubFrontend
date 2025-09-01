@@ -1,4 +1,4 @@
-import { toggleReviewReaction ,addComment, getMovies, registerUser, loginUser, getCategories, createMovie, getPendingMovies, approveMovie, createCategory, getMovieDetails, createReview } from './api.js';
+import { getReviewsByMovie  ,toggleReviewReaction ,addComment, getMovies, registerUser, loginUser, getCategories, createMovie, getPendingMovies, approveMovie, createCategory, getMovieDetails, createReview } from './api.js';
 import { showAlert, formatRating } from './utils.js';
 
 // Elementos del DOM
@@ -16,7 +16,7 @@ const checkAuth = () => {
     if (token) {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
-            authButtons.innerHTML = `<span id="user-name">${payload.name || 'Usuario'}</span>`;
+            authButtons.innerHTML = `<span id="user-name">${payload.username || 'Usuario'}</span>`;
             if (createPostBtn) createPostBtn.style.display = 'block';
             document.getElementById('user-name').addEventListener('click', () => {
                 window.location.href = 'profile.html';
@@ -367,18 +367,32 @@ const loadMovieDetails = async () => {
 };
 
 // Cargar y renderizar reseñas
+// Cargar y renderizar reseñas
 const loadReviews = async (movieId) => {
     const token = localStorage.getItem('token');
     try {
-        const movie = await getMovieDetails(movieId, token);
+        // 1) Trae SOLO las reviews desde la colección reviews
+        const reviews = await getReviewsByMovie(movieId);
+
         const reviewsList = document.getElementById('reviews-list');
         reviewsList.innerHTML = '';
-        movie.reviews.forEach(review => {
+
+        reviews.forEach(review => {
+            // review es un objeto REAL con _id, comment, rating, etc.
             const div = document.createElement('div');
             div.className = 'review-card';
+
+            const likesCount = typeof review.likes === 'number' ? review.likes : (Array.isArray(review.likes) ? review.likes.length : 0);
+            const dislikesCount = typeof review.dislikes === 'number' ? review.dislikes : (Array.isArray(review.dislikes) ? review.dislikes.length : 0);
+
             div.innerHTML = `
-                <p><strong>${review.userName}</strong> - ${formatRating(review.rating)} - ${new Date(review.createdAt).toLocaleDateString()}</p>
-                <p>${review.text}</p>
+                <p>
+                  <strong>${review.userName || 'Usuario'}</strong>
+                  - ${formatRating(review.rating || 0)}
+                  - ${new Date(review.createdAt || Date.now()).toLocaleDateString()}
+                </p>
+                <p>${review.comment || 'Sin texto'}</p>
+
                 <div class="comments-section" id="comments-${review._id}">
                     <h4>Comentarios</h4>
                     <form id="comment-form-${review._id}" style="display: none;">
@@ -389,47 +403,55 @@ const loadReviews = async (movieId) => {
                     <button id="add-comment-${review._id}">Añadir Comentario</button>
                     <div id="comments-list-${review._id}"></div>
                 </div>
-                <button id="like-btn-${review._id}" data-action="like">👍 ${review.likes || 0}</button>
-                <button id="dislike-btn-${review._id}" data-action="dislike">👎 ${review.dislikes || 0}</button>
+
+                <button id="like-btn-${review._id}">👍 ${likesCount}</button>
+                <button id="dislike-btn-${review._id}">👎 ${dislikesCount}</button>
             `;
             reviewsList.appendChild(div);
 
-            // Cargar comentarios
-            if (review.comments) {
+            // Comentarios existentes (si los hay)
+            if (Array.isArray(review.comments)) {
                 const commentsList = document.getElementById(`comments-list-${review._id}`);
-                review.comments.forEach(comment => {
+                review.comments.forEach(c => {
                     const commentDiv = document.createElement('div');
-                    commentDiv.innerHTML = `<p>${comment.userName}: ${comment.text} - ${new Date(comment.createdAt).toLocaleDateString()}</p>`;
+                    commentDiv.innerHTML = `
+                        <p>${c.userName || 'Usuario'}: ${c.text || 'Sin texto'} - ${new Date(c.createdAt || Date.now()).toLocaleDateString()}</p>
+                    `;
                     commentsList.appendChild(commentDiv);
                 });
             }
 
-            // Evento para añadir comentario
+            // Mostrar formulario de comentario
             document.getElementById(`add-comment-${review._id}`).addEventListener('click', () => {
                 document.getElementById(`comment-form-${review._id}`).style.display = 'block';
             });
+
+            // Enviar comentario
             document.getElementById(`comment-form-${review._id}`).addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const commentText = document.getElementById(`comment-text-${review._id}`).value;
+                const commentText = document.getElementById(`comment-text-${review._id}`).value.trim();
                 if (commentText) {
-                    await addComment(movieId, review._id, { text: commentText }, token);
+                    await addComment(review._id, { text: commentText }, token);
                     document.getElementById(`comment-text-${review._id}`).value = '';
                     document.getElementById(`comment-form-${review._id}`).style.display = 'none';
                     loadReviews(movieId);
                 }
             });
+
+            // Cancelar comentario
             document.getElementById(`cancel-comment-${review._id}`).addEventListener('click', () => {
                 document.getElementById(`comment-form-${review._id}`).style.display = 'none';
                 document.getElementById(`comment-text-${review._id}`).value = '';
             });
 
-            // Evento para likes/dislikes
+            // Like / Dislike (enviar boolean!)
             document.getElementById(`like-btn-${review._id}`).addEventListener('click', async () => {
-                await toggleReviewReaction(movieId, review._id, 'like', token);
+                await toggleReviewReaction(review._id, true, token);
                 loadReviews(movieId);
             });
+
             document.getElementById(`dislike-btn-${review._id}`).addEventListener('click', async () => {
-                await toggleReviewReaction(movieId, review._id, 'dislike', token);
+                await toggleReviewReaction(review._id, false, token);
                 loadReviews(movieId);
             });
         });
@@ -437,6 +459,7 @@ const loadReviews = async (movieId) => {
         showAlert('Error al cargar reseñas: ' + error.message);
     }
 };
+
 
 // Manejar creación de reseña
 // Manejar creación de reseña
@@ -455,10 +478,9 @@ const handleReviewForm = async (e) => {
 
     try {
         // Extraer userId del token (asumiendo que está en el payload)
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        const userId = payload.id; // Asegúrate de que el token incluya id
+        
 
-        await createReview(movieId, { title, comment: text, rating: parseInt(rating), userId }, token);
+        await createReview(movieId, { title, comment: text, rating: parseInt(rating)     }, token);
         document.getElementById('review-form').reset();
         document.getElementById('create-review').style.display = 'none';
         loadReviews(movieId);
@@ -466,10 +488,14 @@ const handleReviewForm = async (e) => {
         showAlert(error.message);
     }
 };
-
+/* if (!review._id) {
+    console.error('Review ID is undefined for review:', review);
+    return;
+} */
 // Manejar eventos
 document.addEventListener('DOMContentLoaded', () => {
     checkAuth();
+    
     if (document.getElementById('movie-list')) loadMovies();
     if (document.getElementById('pending-movie-list')) loadPendingMovies();
     if (document.getElementById('category-list')) loadCategories();

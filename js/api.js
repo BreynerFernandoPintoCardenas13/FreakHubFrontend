@@ -79,7 +79,7 @@ export const getMovies = async (token, category = null, title = null) => {
         params.append('category', category);
     }
     if (title) {
-        // en este caso necesitas un endpoint de búsqueda por título en backend
+        endpoint = '/movies/title'; 
         params.append('title', title);
     }
     if (params.toString()) endpoint += '?' + params.toString();
@@ -196,3 +196,5 @@ export const getReviewById = async (reviewId, token) => {
 export const getReviewsByMovie = async (movieId) => {
     return await fetchData(`/movies/${movieId}/reviews`);
 };
+
+

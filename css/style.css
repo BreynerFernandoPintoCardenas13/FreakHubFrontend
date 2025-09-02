@@ -148,14 +148,33 @@ button:active {
 }
 
 /* 🎬 Grid de películas */
+/* 🎬 Grid de películas con scroll horizontal */
 .content-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1.5rem;
-    padding: 2rem;
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+}
+
+.content-grid::-webkit-scrollbar {
+    height: 10px;
+}
+.content-grid::-webkit-scrollbar-track {
+    background: #111;
+}
+.content-grid::-webkit-scrollbar-thumb {
+    background: none;
+    border-radius: 6px;
+}
+.content-grid::-webkit-scrollbar-thumb:hover {
+    background: none;
 }
 
 .movie-card {
+    flex: 0 0 auto; 
+    width: 200px;
     background-color: #222;
     padding: 1rem;
     border-radius: 10px;
@@ -163,12 +182,13 @@ button:active {
     transition: all 0.3s ease;
     box-shadow: 0 2px 6px rgba(0,0,0,0.4);
     position: relative;
+    
     overflow: hidden;
+    scroll-snap-align: start; 
 }
 
 .movie-card img {
     width: 100%;
-    height: auto;
     border-radius: 8px;
     margin-bottom: 0.5rem;
     transition: transform 0.3s ease;

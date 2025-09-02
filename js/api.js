@@ -1,8 +1,5 @@
 // Configuración base para las peticiones
 const API_BASE_URL = 'http://localhost:3000/api'; 
-
-// Función para hacer peticiones GET
-// Función para hacer peticiones GET
 const fetchData = async (endpoint, token = null) => {
     const headers = { 'Content-Type': 'application/json' };
     if (token) {
@@ -24,7 +21,7 @@ const fetchData = async (endpoint, token = null) => {
         throw error;
     }
 };
-// Función para hacer peticiones POST
+// Función para hacer peticiones POST 
 const postData = async (endpoint, data, token = null) => {
     const headers = { 'Content-Type': 'application/json' };
     if (token) {
@@ -71,10 +68,23 @@ const postFormData = async (endpoint, formData, token = null) => {
 };
 
 // Obtener todas las películas aceptadas
-export const getMovies = async (token) => {
-    return await fetchData('/movies', token);
+// Obtener todas las películas aceptadas (con filtros opcionales)
+// Obtener todas las películas aceptadas (con filtros opcionales)
+export const getMovies = async (token, category = null, title = null) => {
+    let endpoint = '/movies';
+    const params = new URLSearchParams();
+    if (category) {
+        // usar el endpoint correcto para categorías
+        endpoint = '/movies/category';
+        params.append('category', category);
+    }
+    if (title) {
+        // en este caso necesitas un endpoint de búsqueda por título en backend
+        params.append('title', title);
+    }
+    if (params.toString()) endpoint += '?' + params.toString();
+    return await fetchData(endpoint, token);
 };
-
 // Registrar un nuevo usuario
 export const registerUser = async (userData) => {
     return await postData('/register', userData);

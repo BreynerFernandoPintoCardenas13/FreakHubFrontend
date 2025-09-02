@@ -1,4 +1,4 @@
-/* Reset básico */
+/* 🎬 Reset básico */
 * {
     margin: 0;
     padding: 0;
@@ -6,37 +6,44 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: "Roboto", Arial, sans-serif;
     background-color: #141414;
-    color: #fff;
+    color: #f5f5f5;
     line-height: 1.6;
 }
 
-/* Header */
+/* 🎬 Header */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background-color: #000;
+    background: linear-gradient(to right, #000, #111);
     border-bottom: 1px solid #333;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .logo h1 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: bold;
     color: #e50914;
+    letter-spacing: 2px;
+    cursor: pointer;
 }
 
 nav ul {
     list-style: none;
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 nav ul li a {
-    color: #fff;
+    color: #ccc;
     text-decoration: none;
     font-size: 1rem;
+    transition: color 0.3s ease;
 }
 
 nav ul li a:hover {
@@ -46,38 +53,44 @@ nav ul li a:hover {
 #auth-buttons {
     display: flex;
     gap: 1rem;
+    align-items: center;
 }
 
 #auth-buttons span#user-name {
     cursor: pointer;
+    font-weight: bold;
 }
 
 #auth-buttons button,
 button {
-    padding: 0.5rem 1rem;
-    background-color: #e50914;
+    padding: 0.5rem 1.2rem;
+    background: #e50914;
     border: none;
     color: #fff;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 1rem;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
 #auth-buttons button:hover,
 button:hover {
-    background-color: #f40612;
+    background: #f40612;
+    transform: scale(1.05);
 }
 
-/* Main */
+/* 🎬 Hero Section */
 .hero {
     text-align: center;
-    padding: 2rem;
-    background-color: #1a1a1a;
+    padding: 3rem 2rem;
+    background: linear-gradient(to bottom, #1a1a1a, #111);
 }
 
 .hero h2 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    margin-bottom: 0.8rem;
+    color: #fff;
 }
 
 .hero p {
@@ -85,65 +98,84 @@ button:hover {
     color: #ccc;
 }
 
+/* 🎬 Grid de películas */
 .content-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
     padding: 2rem;
 }
 
 .movie-card {
     background-color: #222;
     padding: 1rem;
-    border-radius: 4px;
+    border-radius: 8px;
     text-align: center;
-    transition: transform 0.2s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 
 .movie-card img {
     width: 100%;
     height: auto;
-    border-radius: 4px;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
 }
 
 .movie-card h3 {
     margin: 0.5rem 0;
     font-size: 1.1rem;
+    color: #fff;
 }
 
 .movie-card .rating {
     color: #ffd700;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    font-weight: bold;
 }
 
 .movie-card:hover {
-    transform: scale(1.05);
+    transform: scale(1.07);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.6);
     cursor: pointer;
 }
 
+/* 🎬 Formularios */
 form {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-width: 400px;
+    max-width: 420px;
     margin: 2rem auto;
-    padding: 1rem;
+    padding: 1.5rem;
     background-color: #1a1a1a;
-    border-radius: 4px;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.4);
 }
 
 form label {
     font-size: 1rem;
+    font-weight: bold;
+    color: #ddd;
 }
 
 form input,
-form select {
-    padding: 0.5rem;
+form select,
+form textarea {
+    padding: 0.7rem;
     font-size: 1rem;
     border: 1px solid #333;
-    border-radius: 4px;
+    border-radius: 6px;
     background-color: #222;
     color: #fff;
+    outline: none;
+    transition: border 0.3s ease;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+    border: 1px solid #e50914;
 }
 
 form input[type="file"] {
@@ -155,14 +187,17 @@ form button {
     margin-top: 1rem;
 }
 
+/* 🎬 Alertas */
 .alert {
     position: fixed;
     top: 1rem;
     left: 50%;
     transform: translateX(-50%);
-    padding: 1rem;
-    border-radius: 4px;
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
     z-index: 1000;
+    font-weight: bold;
+    animation: fadeIn 0.5s ease;
 }
 
 .alert.error {
@@ -175,29 +210,37 @@ form button {
     color: #fff;
 }
 
-/* Footer */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* 🎬 Footer */
 footer {
     text-align: center;
     padding: 1rem;
     background-color: #000;
     border-top: 1px solid #333;
+    font-size: 0.9rem;
+    color: #777;
 }
 
-
-
+/* 🎬 Página de detalles */
 .movie-details {
     padding: 2rem;
     background-color: #1a1a1a;
-    border-radius: 4px;
+    border-radius: 8px;
     margin: 2rem;
     display: flex;
     gap: 2rem;
-    align-items: center;
+    align-items: flex-start;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.5);
 }
 
 .movie-details img {
-    max-width: 300px;
-    height: auto;
+    max-width: 280px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
 }
 
 .reviews-section {
@@ -207,17 +250,66 @@ footer {
 .review-card {
     background-color: #222;
     padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
 .comments-section {
     margin-top: 1rem;
     padding-left: 1rem;
+    border-left: 2px solid #333;
 }
 
-#comment-form-${review._id} textarea {
+.comments-section h4 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: #e50914;
+}
+
+.comments-section textarea {
     width: 100%;
     margin-bottom: 0.5rem;
+    border-radius: 6px;
+    background-color: #222;
+    color: #fff;
+}
+.section {
+    margin: 2rem 0;
 }
 
+.section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #e50914;
+}
+
+.search-bar {
+    display: flex;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 1rem auto;
+}
+
+#search-input {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background-color: #222;
+    color: #fff;
+}
+
+#search-btn {
+    padding: 0.5rem 1rem;
+    background-color: #e50914;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#search-btn:hover {
+    background-color: #f40612;
+}

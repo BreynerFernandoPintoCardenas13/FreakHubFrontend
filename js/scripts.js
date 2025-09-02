@@ -57,30 +57,84 @@ const getUsernameFromToken = (token) => {
 };
 
 // Cargar y renderizar películas
+// Cargar y renderizar películas
+// Cargar y renderizar películas
 const loadMovies = async () => {
+    const token = localStorage.getItem('token');
     try {
-        const movies = await getMovies(localStorage.getItem('token'));
-        if (movieList) {
-            movieList.innerHTML = '';
-            movies.forEach(movie => {
-                const card = document.createElement('div');
-                card.className = 'movie-card';
-                card.innerHTML = `
-                    <img src="${movie.image || 'https://via.placeholder.com/200x300'}" alt="${movie.title}">
-                    <h3>${movie.title}</h3>
-                    <div class="rating">${formatRating(movie.rating)}</div>
-                `;
-                card.addEventListener('click', () => {
-                    window.location.href = `details.html?id=${movie._id}`;
-                });
-                movieList.appendChild(card);
-            });
-        }
+        const movies = await getMovies(token); // Carga todas las películas aceptadas
+        renderSection('movie-list', movies);
     } catch (error) {
-        showAlert('Error al cargar películas: ' + error.message);
+        showAlert('Error al cargar publicaciones: ' + error.message);
     }
 };
 
+// Función para renderizar una sección de películas
+const renderSection = (sectionId, movies) => {
+    const sectionList = document.getElementById(sectionId);
+    if (sectionList) {
+        sectionList.innerHTML = '';
+        movies.forEach(movie => {
+            const card = document.createElement('div');
+            card.className = 'movie-card';
+            card.innerHTML = `
+                <img src="${movie.image || 'https://via.placeholder.com/200x300'}" alt="${movie.title}">
+                <h3>${movie.title}</h3>
+                <div class="rating">${formatRating(movie.rating)}</div>
+            `;
+            card.addEventListener('click', () => {
+                window.location.href = `details.html?id=${movie._id}`;
+            });
+            sectionList.appendChild(card);
+        });
+    }
+};
+
+// Cargar secciones específicas por categoría
+const loadCategorySection = async (category, sectionId) => {
+    const token = localStorage.getItem('token');
+    try {
+        const movies = await getMovies(token, category);
+        renderSection(sectionId, movies);
+        document.getElementById(sectionId.replace('-list', '-section')).style.display = 'block';
+    } catch (error) {
+        showAlert(`Error al cargar ${category}: ${error.message}`);
+    }
+};
+
+// Manejar búsqueda por título
+const handleSearch = async () => {
+    const searchInput = document.getElementById('search-input').value.trim();
+    if (searchInput) {
+        try {
+            const movies = await getMovies(localStorage.getItem('token'), null, searchInput);
+            renderSection('movie-list', movies);
+            // Ocultar secciones específicas
+            ['pelicula', 'telenovela', 'serie', 'anime'].forEach(cat => {
+                document.getElementById(`${cat}-section`).style.display = 'none';
+            });
+        } catch (error) {
+            showAlert('Error en la búsqueda: ' + error.message);
+        }
+    } else {
+        showAlert('Ingresa un título para buscar');
+    }
+};
+
+// Inicializar al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    checkAuth();
+    if (document.getElementById('movie-list')) loadMovies();
+    const searchBtn = document.getElementById('search-btn');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', handleSearch);
+    }
+    // Cargar todas las secciones al inicio
+    loadCategorySection('pelicula', 'pelicula-list');
+    loadCategorySection('telenovela', 'telenovela-list');
+    loadCategorySection('serie', 'serie-list');
+    loadCategorySection('anime', 'anime-list');
+});
 // Cargar categorías en el select
 const loadCategories = async () => {
     if (categorySelect) {
@@ -231,30 +285,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('movie-list')) loadMovies();
     if (document.getElementById('pending-movie-list')) loadPendingMovies();
 });
-
-
-// Cargar y renderizar categorías existentes
-/* const loadCategories = async () => {
-    try {
-        const categories = await getCategories(localStorage.getItem('token'));
-        const categoryList = document.getElementById('category-list');
-        if (categoryList) {
-            categoryList.innerHTML = '';
-            categories.forEach(category => {
-                const div = document.createElement('div');
-                div.innerHTML = `
-                    <span>${category.name}</span>
-                    <button class="edit-category-btn" data-id="${category._id}">Editar</button>
-                `;
-                categoryList.appendChild(div);
-                const editBtn = div.querySelector('.edit-category-btn');
-                editBtn.addEventListener('click', () => editCategory(category._id, category.name));
-            });
-        }
-    } catch (error) {
-        showAlert('Error al cargar categorías: ' + error.message);
-    }
-}; */
 
 // Manejar creación/edición de categoría
 const handleCategoryForm = async (e) => {

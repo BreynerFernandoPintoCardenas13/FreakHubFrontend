@@ -28,3 +28,7 @@ FreakHub es una aplicación web diseñada para gestionar propuestas de película
 
 - 🎨Frontend:
 <img width="243" height="407" alt="image" src="https://github.com/user-attachments/assets/cf431833-3293-43ff-b613-88fc4d4e364c" />
+
+## Trello
+
+https://trello.com/b/gWIttAVA/freak-hub
